@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Our Products | The Decor Edits{% endblock %}
+{% block extra_css %}
+<style>
+    .shop-hero { background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%); padding: 40px 0 50px; text-align: center; color: var(--white); }
+    .shop-hero h1 { font-size: 2.2rem; color: var(--white); margin-bottom: 6px; }
+    .shop-hero p { color: rgba(255,255,255,.6); font-size: 1.4rem; }
+    .shop-content { padding: 30px 0 50px; }
+    .shop-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .result-count { font-size: 1.4rem; color: var(--text-muted); }
+    .result-count strong { color: var(--text); }
+    .search-active { display: inline-flex; align-items: center; gap: 8px; background: var(--white); padding: 6px 14px; border-radius: 20px; font-size: 1.3rem; color: var(--text-muted); border: 1px solid #ddd; }
+    .search-active a { color: var(--primary); font-weight: 600; font-size: 1.2rem; }
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state i { font-size: 3rem; color: #ddd; margin-bottom: 12px; }
+    .empty-state h3 { color: var(--text-muted); font-weight: 500; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="shop-hero">
+    <div class="container">
+        <h1>Our Products</h1>
+        <p>Browse through our premium home decor selection</p>
+    </div>
+</div>
+
+<div class="shop-content">
+    <div class="container">
+        <div class="shop-header">
+            <div class="result-count">Showing <strong>{{ products|length }}</strong> product{{ products|length|pluralize }}</div>
+            {% if search_query %}
+            <div class="search-active"><i class="fas fa-search"></i> "{{ search_query }}" <a href="{% url 'products' %}">Clear</a></div>
+            {% endif %}
+        </div>
+
+        {% if products %}
+        <div class="row g-3">
+            {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="jk-banner-product-wrapper">
+                    <a href="{% url 'product_detail' product.id %}">
+                        <img src="{{ product.image.url }}" alt="{{ product.sku }}">
+                    </a>
+                    <div class="jk-banner-product-content">
+                        <h2><a href="{% url 'product_detail' product.id %}">{{ product.description|truncatewords:10 }}</a></h2>
+                        {% with lowest=product.pricings.all|dictsort:"price"|first %}
+                        {% if lowest %}
+                        <div class="jk-banner-product-price"><span>&#8377; {{ lowest.price }}</span> <small style="font-size:1.2rem;font-weight:400;color:var(--text-muted)">/Piece</small></div>
+                        {% endif %}
+                        {% endwith %}
+                        <div class="jk-banner-product-list-info">
+                            <ul>
+                                {% if product.dimensions %}
+                                <li><span class="clr7">Dimensions:</span> <span class="clr2">{{ product.dimensions }}</span></li>
+                                {% endif %}
+                                <li><span class="clr7">SKU:</span> <span class="clr2">{{ product.sku }}</span></li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'quote_form' product.id %}" class="get-q-btn">Get Quote</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state"><i class="fas fa-search"></i><h3>No products found</h3></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

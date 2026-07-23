@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.sku }} | The Decor Edits{% endblock %}
+{% block extra_css %}
+<style>
+    .pdp-hero { background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%); padding: 30px 0 50px; text-align: center; color: var(--white); }
+    .pdp-hero h1 { font-size: 2rem; color: var(--white); margin-bottom: 4px; }
+    .pdp-hero p { color: rgba(255,255,255,.5); font-size: 1.3rem; }
+    .pdp-wrapper { max-width: 1000px; margin: -30px auto 50px; padding: 0 20px; position: relative; z-index: 2; }
+    .pdp-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px 0 rgba(0,0,0,.15); }
+    .pdp-card .row { min-height: 400px; }
+    .pdp-img { background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 30px; }
+    .pdp-img img { max-width: 100%; max-height: 360px; object-fit: contain; }
+    .pdp-info { padding: 30px; }
+    .sku-badge { display: inline-block; background: #e3f2fd; color: #1976d2; font-size: 1.2rem; font-weight: 600; padding: 4px 10px; border-radius: 4px; margin-bottom: 12px; }
+    .pdp-info h2 { font-size: 2rem; font-weight: 700; margin-bottom: 14px; line-height: 1.3; }
+    .pdp-divider { border: none; height: 1px; background: #eee; margin: 16px 0; }
+    .pdp-specs { list-style: none; padding: 0; margin: 0 0 16px 0; }
+    .pdp-specs li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 1.4rem; }
+    .pdp-specs li:last-child { border-bottom: none; }
+    .pdp-specs li .lbl { font-weight: 600; color: var(--text-muted); }
+    .pdp-specs li .val { color: var(--text); text-align: right; }
+    .pdp-price-box { background: #f9f9f9; border-radius: 8px; padding: 16px; margin-bottom: 18px; }
+    .pdp-price-box h5 { font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 10px; }
+    .pdp-price-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 1.4rem; }
+    .pdp-price-row:last-child { border-bottom: none; }
+    .pdp-price-row .moq { font-weight: 600; }
+    .pdp-price-row .price { font-weight: 700; color: var(--primary); }
+    .btn-quote-big { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; background: var(--primary); color: var(--white); border: none; border-radius: 6px; font-size: 1.5rem; font-weight: 600; cursor: pointer; transition: all .2s; text-decoration: none; }
+    .btn-quote-big:hover { background: var(--primary-dark); color: var(--white); }
+    .btn-back { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; color: var(--text-muted); font-weight: 500; font-size: 1.3rem; }
+    .btn-back:hover { color: var(--primary); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="pdp-hero">
+    <div class="container">
+        <h1>{{ product.sku }}</h1>
+        <p>Product Details</p>
+    </div>
+</div>
+
+<div class="pdp-wrapper">
+    <div class="pdp-card">
+        <div class="row g-0">
+            <div class="col-md-5 pdp-img">
+                <img src="{{ product.image.url }}" alt="{{ product.sku }}">
+            </div>
+            <div class="col-md-7 pdp-info">
+                <span class="sku-badge">SKU: {{ product.sku }}</span>
+                <h2>{{ product.description }}</h2>
+                <hr class="pdp-divider">
+                <ul class="pdp-specs">
+                    <li><span class="lbl">SKU</span><span class="val">{{ product.sku }}</span></li>
+                    {% if product.dimensions %}
+                    <li><span class="lbl">Dimensions</span><span class="val">{{ product.dimensions }}</span></li>
+                    {% endif %}
+                    <li><span class="lbl">Views</span><span class="val">{{ product.views_count }}</span></li>
+                </ul>
+                {% if pricings %}
+                <div class="pdp-price-box">
+                    <h5><i class="fas fa-tags me-1"></i> Pricing (MOQ)</h5>
+                    {% for p in pricings %}
+                    <div class="pdp-price-row">
+                        <span class="moq">Min. Order: {{ p.moq }} pcs</span>
+                        <span class="price">&#8377; {{ p.price }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <a href="{% url 'quote_form' product.id %}" class="btn-quote-big"><i class="fas fa-file-alt"></i> Get Quote</a>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'products' %}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Products</a>
+</div>
+{% endblock %}
